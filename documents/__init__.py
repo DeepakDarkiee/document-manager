@@ -12,8 +12,8 @@ default_registry.register(
                 items=[
                     MenuItem(
                         label="Documents",
-                        endpoint="documents-list",
-                        add=MenuItem(label="Add Documents", endpoint="documents-list"),
+                        endpoint="document-list",
+                        add=MenuItem(label="Add Documents", endpoint="document-list"),
                     ),
                 ],
             ),

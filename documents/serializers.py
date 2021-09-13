@@ -32,7 +32,7 @@ class DocumentTypeSerializer(serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.ModelSerializer):
-    _type = DocumentTypeRepresentationSerializer(source="document_type")
+    _type = DocumentTypeRepresentationSerializer(source="type")
 
     class Meta:
         model = Document

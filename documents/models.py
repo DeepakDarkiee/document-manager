@@ -11,6 +11,36 @@ class DocumentType(models.Model):
 
     def __str__(self):
         return self.type
+    
+    @classmethod
+    def get_endpoint_basename(cls):
+        return "type"
+
+    @classmethod
+    def get_endpoint(cls):
+        return "type-list"
+
+    def get_tag_detail_endpoint(self):
+        return reverse("type-detail", args=[self.id])
+
+    def get_tag_representation(self):
+        return self.type
+
+    @property
+    def upper_char_field(self):
+        return self.type.upper()
+
+    @classmethod
+    def get_representation_endpoint(cls):
+        return "type-list"
+
+    @classmethod
+    def get_representation_value_key(cls):
+        return "id"
+
+    @classmethod
+    def get_representation_label_key(cls):
+        return "{{type}}"
 
 
 class Document(models.Model):
@@ -22,6 +52,17 @@ class Document(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @classmethod
+    def get_endpoint_basename(cls):
+        return "document"
+
+    @classmethod
+    def get_endpoint(cls):
+        return "document-list"
+
+    def get_tag_detail_endpoint(self):
+        return reverse("document-detail", args=[self.id])
 
 
 class DocumentManager(models.Model):

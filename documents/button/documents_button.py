@@ -1,7 +1,7 @@
 from bridger import buttons as bt
 from bridger import display as dp
 from bridger.buttons.metadata_config import ButtonConfig
-from todos.serializers import ActionButtonSerializer
+# from documents.serializers import ActionButtonSerializer
 
 
 class DocumentButtonConfig(ButtonConfig):

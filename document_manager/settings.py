@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from datetime import timedelta
 
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,7 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'documents'
+    'documents',
+    "bridger",
+    "rest_framework",
+    "django_filters",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -67,8 +74,59 @@ TEMPLATES = [
         },
     },
 ]
+AWS_ACCESS_KEY_ID = "minio"
+AWS_S3_ENDPOINT_URL = "http://localhost:9001"
+AWS_S3_REGION_NAME = "fra1"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_SECRET_ACCESS_KEY = "minio123"
+AWS_STORAGE_BUCKET_NAME = "workbench"
+DATABASE_URL = "postgresql://root:root@localhost/workbench"
+DEBUG = "True"
+DJANGO_SETTINGS_MODULE = "restbench.settings.development"
+REDIS_URL = "redis://localhost:6379"
+SECRET_KEY = "vmeuqO6EgqoXYpKamJSgwfROE7BQN1Vr"
+FRONTEND_VERSION = "1.6.13-rc.8"
+BASE_ENDPOINT_URL = "http://localhost:8000/"
+CDN_BASE_ENDPOINT_URL = (
+    "https://atonra-stainly-cdn.fra1.cdn.digitaloceanspaces.com/static"
+)
+
+
+CELERY_BROKER_URL = config("REDIS_URL", "redis://localhost:6379")
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_RESULT_SERIALIZER = "json"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [config("REDIS_URL", default="redis://")],
+        },
+    },
+}
+
+# CDN_BASE_ENDPOINT_URL = config("CDN_BASE_ENDPOINT_URL", default='')
+FRONTEND_VERSION = "1.6.13-rc.8"
+BRIDGER_SETTINGS = {
+    "DEFAULT_SHARE_NOTIFICATION": "/todos/notifications.py",
+    # "DEFAULT_SHARE_SERIALIZER": "/todos/serializers.py",
+    "FRONTEND_CONTEXT": {
+        "CDN_URLS": [
+            "https://cdn.plot.ly/plotly-latest.min.js",
+            "https://cdn.tiny.cloud/1/735nruhl1ud549mz9imjqabxpknlo6d9n308ev0iqs05gk03/tinymce/5/tinymce.min.js",
+            "https://prowriting.azureedge.net/beyondgrammar-tinymce/1.0.57/dist/beyond-grammar-plugin.js",
+        ],
+        "CSS_URL": f'{CDN_BASE_ENDPOINT_URL}/css/main-{FRONTEND_VERSION.replace(".", "-")}.css',
+        "JS_URL": f'{CDN_BASE_ENDPOINT_URL}/js/main-{FRONTEND_VERSION.replace(".", "-")}.js',
+        "FAVICON_URL": f"{CDN_BASE_ENDPOINT_URL}/favicon.ico",
+    },
+    "MARKDOWN_TEMPLATE_TAGS": ["test_tags"],
+}
+
 
 WSGI_APPLICATION = 'document_manager.wsgi.application'
+ASGI_APPLICATION = "document_manager.routing.application"
 
 
 # Database
@@ -120,7 +178,41 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": (
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+    # "DEFAULT_PERMISSION_CLASSES": (
+    #     "rest_framework.permissions.IsAuthenticated",
+    #     "bridger.permissions.RestAPIModelPermissions",
+    # ),
+    "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z"
+    # 'DEFAULT_METADATA_CLASS': 'wbutils.metadata.WorkbenchMetaData'
+    # 'DEFAULT_METADATA_CLASS': 'drf_auto_endpoint.metadata.AutoMetadata'
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": None,
+    "AUDIENCE": None,
+    "ISSUER": None,
+}
+
+DEV_USER = config("DEV_USER", default=None)
