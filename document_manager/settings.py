@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "channels",
+    "django_celery_beat",
+    "django_celery_results",
+    "django_social_share",
 ]
 
 MIDDLEWARE = [
@@ -216,3 +219,14 @@ SIMPLE_JWT = {
 }
 
 DEV_USER = config("DEV_USER", default=None)
+CELERY_RESULT_BACKEND = "django-db"
+
+CELERY_BROKER_URL = "redis://localhost:6379/"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_IGNORE_RESULT = True
+CELERY_REDIRECT_STDOUTS_LEVEL = False
+
+
+CELERY_TIMEZONE = "Asia/Kolkata"
