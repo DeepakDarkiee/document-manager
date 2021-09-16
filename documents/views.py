@@ -1,15 +1,19 @@
+import io
+import json
+import os
+from subprocess import Popen
+
+import ocrmypdf
 from bridger.filters import FilterSet
 from bridger.viewsets import ModelViewSet, RepresentationViewSet
+from django.conf import settings
 from rest_framework.decorators import action
 from rest_framework.response import Response
-import ocrmypdf
+
 from documents.models import Document, DocumentType
-from documents.serializers import (
-    DocumentSerializer,
-    DocumentTypeRepresentationSerializer,
-    DocumentTypeSerializer,
-)
-import os
+from documents.serializers import (DocumentSerializer,
+                                   DocumentTypeRepresentationSerializer,
+                                   DocumentTypeSerializer)
 
 from .button.documents_button import DocumentButtonConfig
 from .display.documents_display import DocumentDisplayConfig
@@ -28,7 +32,7 @@ class DocumentFilterSet(FilterSet):
 class DocumentTypeRepresentationViewSet(RepresentationViewSet):
     queryset = DocumentType.objects.all()
     serializer_class = DocumentTypeRepresentationSerializer
-
+import time
 
 class DocumentTypeViewSet(ModelViewSet):
     display_config_class = DocumentTypeDisplayConfig
@@ -58,23 +62,25 @@ class DocumentViewSet(ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         if request.data:
+            print(request.data)
             document=request.data.get('document').file
+            print(document)
             name=request.data.get('name')
+            base_dir = settings.BASE_DIR
+            output_file=os.path.join(base_dir ,f"media/ocr/{name}.pdf")
+            ocrmypdf.ocr(document,output_file,deskew=True)
+            # output_file=os.path.join(settings.MEDIA_ROOT ,f"media/ocr/{name}.pdf")
+            # file_path = os.path.join(settings.MEDIA_ROOT,f"ocr/{name}.pdf",'w')
+            # # file_path = settings.MEDIA_ROOT +'/ocr/'+ f"{name}.pdf"
+            # file_path.close()
+            # print(type(file_path))
+            
+            request.data.update({'document':f"./media/ocr/{name}.pdf"})
+            # serializer = DocumentSerializer(data=request.data)
             # import pdb;pdb.set_trace()
-            output_name=str(document)
-            ocrmypdf.ocr(document,os.path.join(f"./media/{name}.pdf"),
-                    deskew=True,
-                )
+            # if serializer.is_valid():
+            #     uploaded=serializer.save()
+                # process = Popen(['ocrmypdf', uploaded.document.path, f"./media/ocr/{name}.pdf"])
             return super(DocumentViewSet, self).create(request, *args, **kwargs)
 
-
-    # @action(
-    #     detail=True,
-    #     methods=["GET", "POST"],
-    # )
-    # def markdone(self, request, pk):
-    #     if request.method == "POST":
-    #         status = request.POST.get("status")
-    #         data = ToDo.objects.filter(pk=pk).update(status=status)
-
-    #     return Response(data=data)
+    
