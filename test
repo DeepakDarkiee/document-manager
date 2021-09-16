@@ -1,3 +1,10 @@
+from django.core.files import File
+with open(file_path, 'rb') as fi:
+    doc_front.file = File(fi, name=file_name)
+    doc_front.save()
+
+
+from django.core.files import File
 import os
 import io
 import ocrmypdf
@@ -59,25 +66,24 @@ class DocumentViewSet(ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         if request.data:
+            document=request.data.get('document').file
+            name=request.data.get('name')
             serializer = DocumentSerializer(data=request.data)
             if serializer.is_valid():
                 uploaded=serializer.save()
                 id = uploaded.id
-            # document=request.data.get('document').file
-            # name=request.data.get('name')
-            # base_dir = settings.BASE_DIR
-            # output_file=os.path.join(base_dir ,f"media/ocr/{name}.pdf")
-            # ocrmypdf.ocr(document,output_file,deskew=True)
+                
+            base_dir = settings.BASE_DIR
+            output_file=os.path.join(base_dir ,f"media/ocr/{name}.pdf")
+            ocrmypdf.ocr(document,output_file,deskew=True)
+            # with open(output_file, 'rb') as fi:
+            #     file = File(fi, name=name)
+            #     Docuemnt.objects.filter(id=id).update(document=file)
             # # output_file=os.path.join(settings.MEDIA_ROOT ,f"media/ocr/{name}.pdf")
             # file_path = os.path.join(settings.MEDIA_ROOT,f"ocr/{name}.pdf")
             # # file_path = settings.MEDIA_ROOT +'/ocr/'+ f"{name}.pdf"
             # print(type(file_path))
             # request.data['document']=file_path
-            # serializer = DocumentSerializer(data=request.data)
-            # import pdb;pdb.set_trace()
-            # if serializer.is_valid():
-            #     uploaded=serializer.save()
-                # process = Popen(['ocrmypdf', uploaded.document.path, f"./media/ocr/{name}.pdf"])
-            return super(DocumentViewSet, self).create(request, *args, **kwargs)
+            return super(DocumentViewSet, self).update(request, *args, **kwargs)
 
     
