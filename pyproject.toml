@@ -9,6 +9,11 @@ python = "3.9.5"
 Django = "^3.2.6"
 django-bridger = "0.11.31"
 ocrmypdf = "12.4.0"
+django-celery-results = "^2.2.0"
+celery = "^5.1.2"
+django-celery-beat = "^2.2.1"
+redis = "^3.5.3"
+pdfplumber = "^0.5.28"
 
 [tool.poetry.dev-dependencies]
 

@@ -1,5 +1,6 @@
-import os
 import io
+import os
+
 import ocrmypdf
 from bridger.filters import FilterSet
 from bridger.viewsets import ModelViewSet, RepresentationViewSet
@@ -8,9 +9,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from documents.models import Document, DocumentType
-from documents.serializers import (DocumentSerializer,
-                                   DocumentTypeRepresentationSerializer,
-                                   DocumentTypeSerializer)
+from documents.serializers import (
+    DocumentSerializer,
+    DocumentTypeRepresentationSerializer,
+    DocumentTypeSerializer,
+)
+from documents.tasks import ocr_convert
 
 from .button.documents_button import DocumentButtonConfig
 from .display.documents_display import DocumentDisplayConfig
@@ -18,12 +22,12 @@ from .display.type_display import DocumentTypeDisplayConfig
 from .preview.documents_preview import DocumentPreviewConfig
 from .titles.documents_title import DocumentTitleConfig
 from .titles.type_title import TypeTitleConfig
-from subprocess import Popen
+
 
 class DocumentFilterSet(FilterSet):
     class Meta:
         model = Document
-        fields = {"name": ["icontains"]}
+        fields = {"name": ["icontains"], "content": ["icontains"]}
 
 
 class DocumentTypeRepresentationViewSet(RepresentationViewSet):
@@ -56,28 +60,30 @@ class DocumentViewSet(ModelViewSet):
     filterset_class = DocumentFilterSet
     search_fields = ["name", "content"]
     ordering_fields = ["name"]
-    
-    def create(self, request, *args, **kwargs):
-        if request.data:
-            serializer = DocumentSerializer(data=request.data)
-            if serializer.is_valid():
-                uploaded=serializer.save()
-                id = uploaded.id
-            # document=request.data.get('document').file
-            # name=request.data.get('name')
-            # base_dir = settings.BASE_DIR
-            # output_file=os.path.join(base_dir ,f"media/ocr/{name}.pdf")
-            # ocrmypdf.ocr(document,output_file,deskew=True)
-            # # output_file=os.path.join(settings.MEDIA_ROOT ,f"media/ocr/{name}.pdf")
-            # file_path = os.path.join(settings.MEDIA_ROOT,f"ocr/{name}.pdf")
-            # # file_path = settings.MEDIA_ROOT +'/ocr/'+ f"{name}.pdf"
-            # print(type(file_path))
-            # request.data['document']=file_path
-            # serializer = DocumentSerializer(data=request.data)
-            # import pdb;pdb.set_trace()
-            # if serializer.is_valid():
-            #     uploaded=serializer.save()
-                # process = Popen(['ocrmypdf', uploaded.document.path, f"./media/ocr/{name}.pdf"])
-            return super(DocumentViewSet, self).create(request, *args, **kwargs)
 
-    
+    # def create(self, request, *args, **kwargs):
+    #     if request.data:
+    #         serializer = DocumentSerializer(data=request.data)
+    #         if serializer.is_valid():
+    #             uploaded = self.perform_create(serializer)
+    #             data_id = uploaded.id
+    #         name = request.data.get("name")
+    #         base_dir = settings.BASE_DIR
+    #         output_file = os.path.join(base_dir, f"media/ocr/{name}.pdf")
+    #         print(type(output_file))
+    #         ocr_convert.delay(output_file, name, data_id)
+    #         request.data["id"] = data_id
+    #         print(request.data)
+    #         return Response(serializer.data, status=201)
+
+    def perform_create(self, serializer):
+        # serializer = DocumentSerializer(data=request.data)
+        if serializer.is_valid():
+            uploaded = serializer.save()
+            data_id = uploaded.id
+        name = uploaded.name
+        base_dir = settings.BASE_DIR
+        output_file = os.path.join(base_dir, f"media/ocr/{name}.pdf")
+        print(type(output_file))
+        ocr_convert.delay(output_file, name, data_id)
+        return uploaded
