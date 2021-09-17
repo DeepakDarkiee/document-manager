@@ -7,11 +7,13 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-from .views import DocumentTypeViewSet, DocumentViewSet
+from .views import DocumentTypeViewSet, DocumentViewSet,DocumentManagerViewSet,ProfileViewSet
 
 router = BridgerRouter()
 router.register(r"document", DocumentViewSet, basename="document")
 router.register(r"type", DocumentTypeViewSet, basename="type")
+router.register(r"document_manager", DocumentManagerViewSet, basename="document_manager")
+router.register(r"profile", ProfileViewSet, basename="profile")
 
 urlpatterns = [
     path("", include(router.urls)),

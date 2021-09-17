@@ -1855,6 +1855,17 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 use_chardet_on_py3 = ["chardet (>=3.0.2,<5)"]
 
 [[package]]
+name = "rest-framework-generic-relations"
+version = "2.1.0"
+description = "Generic Relations for Django Rest Framework"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+djangorestframework = ">=3.11.0"
+
+[[package]]
 name = "safety"
 version = "1.10.3"
 description = "Checks installed dependencies for known vulnerabilities."
@@ -2197,7 +2208,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "3.9.5"
-content-hash = "730b61e9f498057f613eb47bab0a93c54828e366703f37e8fa2dfb2d39c984e9"
+content-hash = "521a17373432103070a77111999b8c2bad146781bb2557649e3309d3c7a4f4fb"
 
 [metadata.files]
 actdiag = [
@@ -3293,6 +3304,10 @@ reportlab = [
 requests = [
     {file = "requests-2.26.0-py2.py3-none-any.whl", hash = "sha256:6c1246513ecd5ecd4528a0906f910e8f0f9c6b8ec72030dc9fd154dc1a6efd24"},
     {file = "requests-2.26.0.tar.gz", hash = "sha256:b8aa58f8cf793ffd8782d3d8cb19e66ef36f7aba4353eec859e74678b01b07a7"},
+]
+rest-framework-generic-relations = [
+    {file = "rest-framework-generic-relations-2.1.0.tar.gz", hash = "sha256:0b7479ba36e87282aae61eeeafd380bd01883ef17aa88eedf61f98cbd07fcbc9"},
+    {file = "rest_framework_generic_relations-2.1.0-py2.py3-none-any.whl", hash = "sha256:b01da2eca2b91051973d38c8a66c2a1812bdc9f601c0a85f863b72caa9309d63"},
 ]
 safety = [
     {file = "safety-1.10.3-py2.py3-none-any.whl", hash = "sha256:5f802ad5df5614f9622d8d71fedec2757099705c2356f862847c58c6dfe13e84"},

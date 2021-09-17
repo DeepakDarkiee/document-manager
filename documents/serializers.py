@@ -7,9 +7,9 @@ from bridger.serializers import (
     register_resource,
 )
 from rest_framework.reverse import reverse
-
-from documents.models import Document, DocumentType
-
+from django.contrib.auth.models import User
+from documents.models import Document, DocumentType,DocumentManager,Profile
+from generic_relations.relations import GenericRelatedField
 # class ActionButtonSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = ToDo
@@ -24,11 +24,41 @@ class DocumentTypeRepresentationSerializer(serializers.RepresentationSerializer)
         model = DocumentType
         fields = ("id", "type", "_detail")
 
+class DocumentRepresentationSerializer(serializers.RepresentationSerializer):
+
+    _detail = serializers.HyperlinkField(reverse_name="document-detail")
+
+    class Meta:
+        model = Document
+        fields = ("id",  "document", "_detail",)
+        
+class DocumentManagerRepresentationSerializer(serializers.RepresentationSerializer):
+
+    _detail = serializers.HyperlinkField(reverse_name="document_manager-detail")
+
+    class Meta:
+        model = DocumentManager
+        fields = ("id",  "documents", "_detail",)
+        
+# class UserRepresentationSerializer(serializers.RepresentationSerializer):
+
+#     _detail = serializers.HyperlinkField(reverse_name="user-detail")
+
+#     class Meta:
+#         model = User
+#         fields = ("id",  "username", "_detail",)
+        
 
 class DocumentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = DocumentType
         fields = ["id", "type", "_additional_resources"]
+        
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ["id", "username", "_additional_resources"]
+
 
 
 class DocumentSerializer(serializers.ModelSerializer):
@@ -47,17 +77,33 @@ class DocumentSerializer(serializers.ModelSerializer):
             "_additional_resources",
         ]
 
-    # @register_resource()
-    # def markdone(self, instance, request, user):
-    #     return {"markdone": reverse("todo-markdone", args=[instance.id])}
+
+class DocumentManagerSerializer(serializers.ModelSerializer):
+    _documents = DocumentRepresentationSerializer(source="documents")
+    
+        
+    class Meta:
+        model = DocumentManager
+        fields = [
+            "id",
+            "content_type",
+            "object_id",
+            "content_object",
+            "documents",
+            "_documents",
+            "_additional_resources",
+        ]
 
 
-# .../serializers.py
+class ProfileSerializer(serializers.ModelSerializer):
+    document_manager = GenericRelatedField({DocumentManager: serializers.HyperlinkField(reverse_name="document-detail")})
 
-
-# class CustomShareSerializer(Serializer):
-#     user_id = IntegerField(label="User ID")
-#     widget_endpoint = CharField(label="Widget URL")
-#     message = TextField(label="Message", default="Check out this Widget.")
-
-#     some_additional_field = IntegerField(label="Some Additional Field")
+    class Meta:
+        model = Profile
+        fields = [
+            "id",
+            "user",
+            "created_at",
+            "document_manager",
+            "_additional_resources",
+        ]
