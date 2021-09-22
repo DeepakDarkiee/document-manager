@@ -6,10 +6,12 @@ from bridger.serializers import (
     TextField,
     register_resource,
 )
-from rest_framework.reverse import reverse
 from django.contrib.auth.models import User
-from documents.models import Document, DocumentType,DocumentManager,Profile
 from generic_relations.relations import GenericRelatedField
+from rest_framework.reverse import reverse
+
+from documents.models import Document, DocumentManager, DocumentType, Profile
+
 # class ActionButtonSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = ToDo
@@ -24,22 +26,33 @@ class DocumentTypeRepresentationSerializer(serializers.RepresentationSerializer)
         model = DocumentType
         fields = ("id", "type", "_detail")
 
+
 class DocumentRepresentationSerializer(serializers.RepresentationSerializer):
 
     _detail = serializers.HyperlinkField(reverse_name="document-detail")
 
     class Meta:
         model = Document
-        fields = ("id",  "document", "_detail",)
-        
+        fields = (
+            "id",
+            "document",
+            "_detail",
+        )
+
+
 class DocumentManagerRepresentationSerializer(serializers.RepresentationSerializer):
 
     _detail = serializers.HyperlinkField(reverse_name="document_manager-detail")
 
     class Meta:
         model = DocumentManager
-        fields = ("id",  "documents", "_detail",)
-        
+        fields = (
+            "id",
+            "documents",
+            "_detail",
+        )
+
+
 # class UserRepresentationSerializer(serializers.RepresentationSerializer):
 
 #     _detail = serializers.HyperlinkField(reverse_name="user-detail")
@@ -47,18 +60,18 @@ class DocumentManagerRepresentationSerializer(serializers.RepresentationSerializ
 #     class Meta:
 #         model = User
 #         fields = ("id",  "username", "_detail",)
-        
+
 
 class DocumentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = DocumentType
         fields = ["id", "type", "_additional_resources"]
-        
+
+
 # class UserSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = User
 #         fields = ["id", "username", "_additional_resources"]
-
 
 
 class DocumentSerializer(serializers.ModelSerializer):
@@ -80,8 +93,7 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 class DocumentManagerSerializer(serializers.ModelSerializer):
     _documents = DocumentRepresentationSerializer(source="documents")
-    
-        
+
     class Meta:
         model = DocumentManager
         fields = [
@@ -96,7 +108,9 @@ class DocumentManagerSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    document_manager = GenericRelatedField({DocumentManager: serializers.HyperlinkField(reverse_name="document-detail")})
+    document_manager = GenericRelatedField(
+        {DocumentManager:serializers.HyperlinkField(reverse_name="document-detail")}
+    )
 
     class Meta:
         model = Profile

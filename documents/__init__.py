@@ -15,6 +15,11 @@ default_registry.register(
                         endpoint="document-list",
                         add=MenuItem(label="Add Documents", endpoint="document-list"),
                     ),
+                    MenuItem(
+                        label="Profile",
+                        endpoint="profile-list",
+                        # add=MenuItem(label="add profile", endpoint="profile-list"),
+                    ),
                 ],
             ),
             MenuItem(
