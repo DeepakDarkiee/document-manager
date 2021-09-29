@@ -401,6 +401,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "convert-to-queryset"
+version = "0.1.5"
+description = "library for convert list,tuple and dictionary into queryset"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[[package]]
 name = "cryptography"
 version = "3.4.8"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
@@ -2208,7 +2216,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "3.9.5"
-content-hash = "521a17373432103070a77111999b8c2bad146781bb2557649e3309d3c7a4f4fb"
+content-hash = "3fcb8286acb7df890f947a9814915457e87b7344f07bd776c34193d84e5acf73"
 
 [metadata.files]
 actdiag = [
@@ -2381,6 +2389,10 @@ colorlog = [
 constantly = [
     {file = "constantly-15.1.0-py2.py3-none-any.whl", hash = "sha256:dd2fa9d6b1a51a83f0d7dd76293d734046aa176e384bf6e33b7e44880eb37c5d"},
     {file = "constantly-15.1.0.tar.gz", hash = "sha256:586372eb92059873e29eba4f9dec8381541b4d3834660707faf8ba59146dfc35"},
+]
+convert-to-queryset = [
+    {file = "convert_to_queryset-0.1.5-py3-none-any.whl", hash = "sha256:e9da54d770acbe56217f637ca28b39fa89843f0fe2f6132e439b4e6f67b5d7c5"},
+    {file = "convert_to_queryset-0.1.5.tar.gz", hash = "sha256:963e905a66b1145991e7cf26241b40b7a49b69e9af682b11c4687db1d8fedd41"},
 ]
 cryptography = [
     {file = "cryptography-3.4.8-cp36-abi3-macosx_10_10_x86_64.whl", hash = "sha256:a00cf305f07b26c351d8d4e1af84ad7501eca8a342dedf24a7acb0e7b7406e14"},

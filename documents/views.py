@@ -32,22 +32,22 @@ from .titles.documentmanager_title import DocumentManagerTitleConfig
 from .titles.documents_title import DocumentTitleConfig
 from .titles.profile_title import ProfileTitleConfig
 from .titles.type_title import TypeTitleConfig
+from convert_to_queryset import list_to_queryset
 
+# def list_to_queryset(model, data):
+#     from django.db.models.base import ModelBase
 
-def list_to_queryset(model, data):
-    from django.db.models.base import ModelBase
+#     if not isinstance(model, ModelBase):
+#         raise ValueError(
+#             "%s must be Model" % model
+#         )
+#     if not isinstance(data, list):
+#         raise ValueError(
+#             "%s must be List Object" % data
+#         )
 
-    if not isinstance(model, ModelBase):
-        raise ValueError(
-            "%s must be Model" % model
-        )
-    if not isinstance(data, list):
-        raise ValueError(
-            "%s must be List Object" % data
-        )
-
-    pk_list = [obj.pk for obj in data]
-    return model.objects.filter(pk__in=pk_list)
+#     pk_list = [obj.pk for obj in data]
+#     return model.objects.filter(pk__in=pk_list)
 
 class DocumentFilterSet(FilterSet):
     class Meta:
@@ -97,6 +97,7 @@ class DocumentViewSet(ModelViewSet):
                     document_manager=profile.document_manager.all()
                     for document in document_manager:
                         queryset_list.append(document.documents)
+                queryset = list_to_queryset(Document,queryset_list)
             except ObjectDoesNotExist:
                 pass
             try:
@@ -112,11 +113,11 @@ class DocumentViewSet(ModelViewSet):
                     document_manager=company.document_manager.all()
                     for document in document_manager:
                         queryset_list.append(document.documents)
+                queryset = list_to_queryset(Document,queryset_list)
             except ObjectDoesNotExist:
                 pass
             
                 # queryset =profile.document_manager.documents.all()
-            queryset = list_to_queryset(Document,queryset_list)
         return queryset
 
     # def create(self, request, *args, **kwargs):
